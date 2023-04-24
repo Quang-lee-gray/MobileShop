@@ -1,0 +1,167 @@
+﻿@model PagedList.IPagedList<MobileShop.Models.EF.Product>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "Sản phẩm";
+}
+<link href="~/Content/Assets/styles/categories_responsive.css" rel="stylesheet" />
+<script src="~/Content/Assets/js/categories_custom.js"></script>
+<link href="~/Content/Assets/styles/categories_styles.css" rel="stylesheet" />
+<div class="container product_section_container">
+    <div class="row">
+        <div class="col product_section clearfix">
+
+            <!-- Breadcrumbs -->
+
+            <div class="breadcrumbs d-flex flex-row align-items-center">
+                <ul>
+                    <li><a href="/sanpham">Home</a></li>
+                    <li class="active"><a href="/"><i class="fa fa-angle-right" aria-hidden="true"></i>@ViewBag.CateName</a></li>
+                </ul>
+            </div>
+
+            <!-- Sidebar -->
+
+            <div class="sidebar">
+                <div class="sidebar_section">
+                    <div class="sidebar_title">
+                        <h5>Loại sản phẩm</h5>
+                    </div>
+                    @Html.Action("MenuLeft", "Menu", new { id = ViewBag.id })
+                </div>
+
+                <!-- Price Range Filtering -->
+                <div class="sidebar_section">
+                    <div class="sidebar_title">
+                        <h5>Lọc giá sản phẩm</h5>
+                    </div>
+                    @using (Html.BeginForm("Index", "Product", FormMethod.Get))
+                    {
+                        <p class="column">
+                            Từ : <input name="fSearchPrice" placeholder="Nhập số tiền(VND)" />
+                            Đến :  <input name="lSearchPrice" placeholder="Nhập số tiền(VND)" />
+                            <hr />
+                            <input class="btn btn-dark" value="Lọc" type="submit" />
+                        </p>
+                    }
+                </div>
+
+
+                <!-- Color -->
+                <div class="sidebar_section">
+                    <div class="sidebar_title">
+                        <h5>Màu</h5>
+                    </div>
+                    <ul class="checkboxes">
+                        <li><i class="fa fa-square-o" aria-hidden="true"></i><span>Black</span></li>
+                        <li class="active"><i class="fa fa-square" aria-hidden="true"></i><span>Pink</span></li>
+                        <li><i class="fa fa-square-o" aria-hidden="true"></i><span>White</span></li>
+                        <li><i class="fa fa-square-o" aria-hidden="true"></i><span>Blue</span></li>
+                        <li><i class="fa fa-square-o" aria-hidden="true"></i><span>Orange</span></li>
+                        <li><i class="fa fa-square-o" aria-hidden="true"></i><span>White</span></li>
+                        <li><i class="fa fa-square-o" aria-hidden="true"></i><span>Blue</span></li>
+                        <li><i class="fa fa-square-o" aria-hidden="true"></i><span>Orange</span></li>
+                        <li><i class="fa fa-square-o" aria-hidden="true"></i><span>White</span></li>
+                        <li><i class="fa fa-square-o" aria-hidden="true"></i><span>Blue</span></li>
+                        <li><i class="fa fa-square-o" aria-hidden="true"></i><span>Orange</span></li>
+                    </ul>
+                    <div class="show_more">
+                        <span><span>+</span>Show More</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Main Content -->
+
+            <div class="main_content">
+
+                <!-- Products -->
+
+                <div class="products_iso">
+                    <div class="row">
+                        <div class="col">
+
+                            <!-- Product Sorting -->
+
+                            <div class="product_sorting_container product_sorting_container_top">
+                                <ul class="product_sorting">
+                                    <li>
+                                        <span><span class="type_sorting_text">Mặc định</span></span>
+                                        <i class="fa fa-angle-down"></i>
+                                        <ul class="sorting_type">
+                                            <li class="type_sorting_btn" data-isotope-option='{ "sortBy": "original-order" }'><span>Mặc định</span></li>
+                                            <li class="type_sorting_btn" data-isotope-option='{ "sortBy": "price" }'><span>Giá</span></li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <span>Hiển thị</span>
+                                        <span class="num_sorting_text">10</span>
+                                        <i class="fa fa-angle-down"></i>
+                                        <ul class="sorting_num">
+                                            <li class="num_sorting_btn"><span>1</span></li>
+                                            <li class="num_sorting_btn"><span>2</span></li>
+                                            <li class="num_sorting_btn"><span>3</span></li>
+                                            <li class="num_sorting_btn"><span>1</span></li>
+                                            <li class="num_sorting_btn"><span>2</span></li>
+                                            <li class="num_sorting_btn"><span>3</span></li>
+                                            <li class="num_sorting_btn"><span>4</span></li>
+                                            <li class="num_sorting_btn"><span>5</span></li>
+                                            <li class="num_sorting_btn"><span>6</span></li>
+                                            <li class="num_sorting_btn"><span>7</span></li>
+                                            <li class="num_sorting_btn"><span>8</span></li>
+                                            <li class="num_sorting_btn"><span>9</span></li>
+                                            <li class="num_sorting_btn"><span>10</span></li>                                        
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <!-- Product Grid -->
+
+                            <div class="product-grid">
+
+                                <!-- Product 1 -->
+                                @if (Model != null && Model.Any())
+                                {
+                                    foreach (var item in Model)
+                                    {
+                                        var strImg = "";
+                                        var img = item.ProductImages.FirstOrDefault(m => m.IsDefault);
+                                        if (img != null)
+                                        {
+                                            strImg = img.Image;
+                                        }
+                                        var sale = item.Price - item.PriceSale;
+                                        <div class="product-item @item.ProductCategorys.seoTitle">
+                                            <div class="product discount product_filter">
+                                                <div class="product_image">
+                                                    <img src="@strImg" alt="@item.Title">
+                                                </div>
+                                                <div class="favorite favorite_left"> </div>
+
+                                                <div class="product_info">
+                                                    <h6 class="product_name"> <a href="/chi-tiet-san-pham/@item.seoTitle-p@(item.Id)">@item.Title</a> </h6>
+                                                    <div class="product_price">@item.PriceSale<span>@item.Price</span> </div>
+                                                    <div style="display:none" class="in-product_price">@item.Price</div>
+                                                    <div class="product_sale text-danger"><b>Giảm tới</b> <span>@sale</span> </div>
+                                                </div>
+                                            </div>
+                                            <div class="red_button add_to_cart_button"> <a href="#"> Thêm vào giỏ hàng</a> </div>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                            @Html.PagedListPager(Model, page => Url.Action("Index", new { page }))
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/Content/Assets/js/categories_custom.js"></script>
+}
+

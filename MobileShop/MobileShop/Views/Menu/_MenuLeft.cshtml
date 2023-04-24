@@ -1,0 +1,22 @@
+﻿@model IEnumerable<MobileShop.Models.EF.ProductCategory>
+@{
+    ViewBag.Title = "_MenuLeft";
+}
+@if (Model != null && Model.Any())
+{
+    <ul class="sidebar_categories">
+        @foreach (var item in Model)
+        {
+            if (ViewBag.id == item.Id)
+            {
+                <li class="active"><a href="/danh-muc-san-pham/@item.seoTitle-@(item.Id)"><i class="fa fa-angle-double-right" aria-hiden="true"></i> @item.Title</a></li>
+            }
+            else
+            {
+                <li><a href="/danh-muc-san-pham/@item.seoTitle-@(item.Id)">@item.Title</a></li>
+            }
+
+        }
+    </ul>
+}
+

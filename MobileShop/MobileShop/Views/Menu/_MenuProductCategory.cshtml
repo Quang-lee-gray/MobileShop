@@ -1,0 +1,46 @@
+﻿@model IEnumerable<MobileShop.Models.EF.ProductCategory>
+<style>
+    .banner_item {
+        width: 100%;
+        height: 100%;
+    }
+</style>
+@if (Model != null && Model.Any())
+{
+    <!-- Banner -->
+    <div class="banner">
+        <div class="container">
+            <div class="row">
+                @foreach (var item in Model)
+                {
+                    <div class="col-md-4">
+                        <a href="#" class=" text-warning btn btn-info"><b><i>@item.Title</i></b></a>
+                        <img class="banner_item rounded align-items-center" src="@item.Icon">
+                    </div>
+                }
+                @*<div class="col-md-4">
+                        <div class="banner_item align-items-center" style="background-image:url(images/banner_1.jpg)">
+                            <div class="banner_category">
+                                <a href="categories.html"> women's</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="banner_item align-items-center" style="background-image:url(images/banner_2.jpg)">
+                            <div class="banner_category">
+                                <a href="categories.html"> accessories's</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="banner_item align-items-center" style="background-image:url(images/banner_3.jpg)">
+                            <div class="banner_category">
+                                <a href="categories.html"> men's</a>
+                            </div>
+                        </div>
+                    </div>*@
+            </div>
+        </div>
+    </div>
+}
+

@@ -1,0 +1,36 @@
+﻿@model IEnumerable<MobileShop.Models.EF.Product>
+@if (Model != null && Model.Any())
+{
+    foreach (var item in Model)
+    {
+        if (item.PriceSale > 0 && item.PriceSale < item.Price)
+        {
+            var strImg = "";
+            var img = item.ProductImages.FirstOrDefault(m => m.IsDefault);
+            if (img != null)
+            {
+                strImg = img.Image;
+            }
+            <div class="owl-item product_slider_item">
+                <div class="product-item">
+                    <div class="product discount">
+                        <div class="product_image">
+                            <img src="@strImg" alt="Ảnh sản phẩm">
+                        </div>
+                        <div class="favorite favorite_left"> </div>
+                        <div class="product_bubble product_bubble_right product_bubble_red d-flex flex-column align-items-center"> <span>Sale</span> </div>
+                        <div class="product_info">
+                            <h6 class="product_name"> <a href="/chi-tiet-san-pham/@item.seoTitle-p@(item.Id)"> @item.Title</a> </h6>
+                            <div class="product_price">@string.Format("{0:#,0}",item.PriceSale)"<span>@string.Format("{0:#,0}", item.Price)"</span> </div>
+                        </div>
+                        <div class="red_button add_to_cart_button"> <a href="#" data-id="@item.Id" class="btnAddToCart"> Thêm vào giỏ hàng</a> </div>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+
+        }
+    }
+}

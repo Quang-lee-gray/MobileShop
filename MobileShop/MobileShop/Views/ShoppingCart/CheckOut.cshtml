@@ -1,0 +1,77 @@
+﻿@model MobileShop.Models.OrderViewModel
+@{
+    ViewBag.Title = "Thanh toán";
+}
+
+<link href="~/Content/Assets/styles/categories_responsive.css" rel="stylesheet" />
+<link href="~/Content/Assets/styles/categories_styles.css" rel="stylesheet" />
+<div class="container product_section_container">
+    <div class="row">
+        <div class="col product_section clearfix">
+
+            <!-- Breadcrumbs -->
+
+            <div class="breadcrumbs d-flex flex-row align-items-center">
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li class="active"><a href="#"><i class="fa fa-angle-right" aria-hidden="true"></i>Thanh toán</a></li>
+                </ul>
+            </div>
+
+            <!-- Main Content -->
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <h1>Thanh toán</h1>
+                    <p>Bạn hãy kiểm tra lại thông tin đơn hàng chính xác trước khi mua!</p>
+                </div>
+            </div>
+            <hr />
+            @if (ViewBag.Checkcart != null)
+            {
+                <div class="row">
+                   <div id="show_success"></div>
+                    @Html.Action("Partial_CheckOut", "ShoppingCart")
+                    <div class="col-md-3">
+                        @Html.Action("Partial_Thanhtoan", "ShoppingCart")
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div><h3>Bạn chưa có sản phẩm nào !Quay lại trang <a href="/sanpham">sản phẩm</a> để mua hàng </h3></div>
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/Content/Assets/js/categories_custom.js"></script>
+    <script>
+        function OnFailure(rs) {
+            if (!rs.Success) {
+                $('#show_success').html("Mua hàng thất bại!Vui lòng thử lại.");
+            }
+        }
+        $(document).ready(function () {
+            $('#myForm').validate({
+                rules: {
+                    'CustomerName': {
+                        required: true
+                    },
+                    'Phone': {
+                        required: true
+                    },
+                    'Address': {
+                        required: true
+                        }
+                },
+                messages: {
+                    'CustomerName': 'Bạn không được để trống trường này',
+                    'Phone': 'Bạn không được để trống trường này',
+                    'Address': 'Bạn không được để trống trường này'
+                    }
+            })
+        });
+    </script>
+}
+

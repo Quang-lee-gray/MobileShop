@@ -1,0 +1,202 @@
+﻿@model PagedList.IPagedList<MobileShop.Models.EF.Product>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "Danh sách sản phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section navheader{
+
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="~/Admin/Home" class="nav-link">Home</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="~/Admin/Products" class="nav-link">Sản phẩm</a>
+        </li>
+    </ul>
+}
+<link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Quản lý sản phẩm</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item">Home</li>
+                    <li class="breadcrumb-item active">Sản phẩm</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="content container">
+    @using (Html.BeginForm("Index", "Products", FormMethod.Get))
+    {
+        <p>
+            <input name="Search" placeholder="Nhập tên sản phẩm bạn cần tìm..." />
+            <input type="submit" value="Tìm kiếm" class="btn btn-dark btn-sm" />
+        </p>
+    }
+
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Danh sách sản phẩm</h3>
+
+            <div class="card-tools">
+                <a href="~/Admin/Products/Create" class="btn btn-primary">Thêm mới</a>
+                <a href="#" class="btn btn-danger" id="BtnDeleteAll">Xóa</a>
+            </div>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" id="SelectAll" /></th>
+                        <th>STT</th>
+                        <th>Hình ảnh</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Danh mục</th>
+                        <th>Số lượng</th>
+                        <th>Giá</th>
+                        <th>Ngày tạo</th>
+                        <th>Hiển thị trên trang chủ</th>
+                        <th>Sale</th>
+                        <th>Hiển thị</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        var b = 1;
+                        foreach (var item in Model)
+                        {
+                            var strHome = item.IsHome? "<i class='fa fa-check text-success'></i>" : "<i class='fa fa-times text-danger'></i>";
+                            var strSale = item.IsSale ? "<i class='fa fa-check text-success'></i>" : "<i class='fa fa-times text-danger'></i>";
+                            var strCheck = item.IsActive ? "<i class='fa fa-check text-success'></i>" : "<i class='fa fa-times text-danger'></i>";
+                            <tr>
+                                <td><input type="checkbox" id="cbkItem" value="@item.Id" /></td>
+                                <td>@b</td>
+                                <td><img class="imgproduct" data-id="@item.Id" src="@item.ProductImages.FirstOrDefault(m => m.IsDefault).Image" width="60" /></td>
+                                <td>@item.Title</td>
+                                <td>@item.ProductCategorys.Title</td>
+                                <td>@item.Quantity</td>
+                                <td>@item.Price</td>
+                                <td>@item.CreateDate.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    <a href='#' data-id="@item.Id" class="btnHome">@Html.Raw(strHome)</a>
+                                </td>
+                                <td>
+                                    <a href='#' data-id="@item.Id" class="btnSale">@Html.Raw(strSale)</a>
+                                </td>
+                                <td>
+                                    <a href='#' data-id="@item.Id" class="btnActive">@Html.Raw(strCheck)</a>
+                                </td>
+                                <td>
+                                    <a href="~/Admin/Products/Edit/@item.Id" class="btn btn-sm btn-primary"><i class="fa-solid fa-pen-to-square"></i></a>
+                                    <a href="~/Admin/Products/Details/@item.Id" class="btn btn-sm btn-success"><i class="fa-solid fa-circle-info"></i></a>
+                                    <a href="~/Admin/Products/Delete/@item.Id" class="btn btn-sm btn-danger" onclick="return confirm('Bạn chắc chắn muốn xóa?')"><i class="fa-solid fa-trash-can"></i></a>
+                                </td>
+                            </tr>
+                            ++b;
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="12">Không có bản ghi nào!</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page }))
+</section>
+<dic id="dialog">
+    <iframe id="myIframe" style="border:0;width:100%;height:100%;"></iframe>
+</dic>
+@section scripts{
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <script>
+        //jquery js
+        $(document).ready(function () {
+            //Hiển thị form Load ảnh
+            $("#dialog").dialog({
+                autoOpen: false,
+                show: "fade",
+                hide: "fade",
+                modal: true,
+                height: '600',
+                width: '700',
+                resizable: true,
+                title: "Quản lý ảnh sản phẩm",
+                close: function () {
+                    window.location.reload();
+                }
+            });
+            $('body').on("click", ".imgproduct", function () {
+                var proid = $(this).attr("data-id");
+                $("#dialog #myIframe").attr("src", "/Admin/ProductImage/Index/?id=" + proid);
+                $("#dialog").dialog('open');
+                return false;
+            });
+            $('body').on('click', '#BtnDeleteAll', function (e) {
+                e.preventDefault();
+                var str = "";
+                var checkbox = $(this).parents('.card').find('tr td input:checkbox');
+                var i = 0;
+                checkbox.each(function () {
+                    if (this.checked) {
+                        checkbox.attr('selected', 'checked');
+                        var _id = $(this).val();
+                        if (i === 0) {
+                            str += _id;
+                        } else {
+                            str += "," + _id;
+                        }
+                        i++;
+                    } else {
+                        checkbox.attr('selected', '');
+                    }
+                });
+                if (str.length > 0) {
+                    var conf = confirm('Bạn có muốn xóa các bản ghi này không?');
+                    if (conf === true) {
+                        $.ajax({
+                            url: '/Admin/Products/DeleteAll',
+                            type: 'POST',
+                            data: { ids: str },
+                            success: function (rs) {
+                                if (rs.success) {
+                                    location.reload();
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+            //Chức năng chọn tất cả cho input tổng
+            $('body').on('change', '#SelectAll', function () {
+                var checkStatus = this.checked;
+                var checkbox = $(this).parents('.card-body').find('tr td input:checkbox');
+                checkbox.each(function () {
+                    this.checked = checkStatus;
+                    if (this.checked) {
+                        checkbox.attr('selected', 'checked');
+                    } else {
+                        checkbox.attr('selected', '');
+                    }
+                });
+            });
+        });
+    </script>
+}

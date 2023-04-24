@@ -1,0 +1,25 @@
+﻿@model IEnumerable<MobileShop.Models.ShoppingCartItem>
+@{
+    ViewBag.Title = "Thanh toán";
+}
+
+@if (Model != null && Model.Any())
+{
+    <h3>Giỏ hàng <span style="float:right" class="text-danger">@Model.Count()</span></h3>
+    var SumPrice = decimal.Zero;
+    <table class="table table-hover table-bordered table-striped">
+        @foreach (var item in Model)
+        {
+            SumPrice += item.TotalPrice;
+            <tr>
+                <td>@item.ProductName</td>
+                <td>@string.Format("{0:#,0}",item.Price)</td>
+            </tr>
+        }
+        <tr>
+            <td><b>Tổng tiền</b></td>
+            <td><b>@string.Format("{0:#,0}", SumPrice)</b></td>
+        </tr>
+    </table>
+}
+

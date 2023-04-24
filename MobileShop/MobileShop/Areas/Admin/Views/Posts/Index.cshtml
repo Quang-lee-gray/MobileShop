@@ -1,0 +1,164 @@
+﻿@model PagedList.IPagedList<MobileShop.Models.EF.Post>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "Quản lí bài viết";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section navheader{
+
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="~/Admin/Home" class="nav-link">Home</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="~/Admin/Posts" class="nav-link">Bài viết</a>
+        </li>
+    </ul>
+}
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Quản lý bài viết</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item">Home</li>
+                    <li class="breadcrumb-item active">Bài viết</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="content container">
+    @using (Html.BeginForm("Index", "Posts", FormMethod.Get))
+    {
+        <p>
+            <input name="Search" placeholder="Nhập dữ liệu bạn cần tìm..." />
+            <input type="submit" value="Tìm kiếm" class="btn btn-dark btn-sm" />
+        </p>
+    }
+
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Danh sách bài viết</h3>
+
+            <div class="card-tools">
+                <a href="~/Admin/Posts/Create" class="btn btn-primary">Thêm mới</a>
+                <a href="#" class="btn btn-danger" id="BtnDeleteAll">Xóa</a>
+            </div>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" id="SelectAll" /></th>
+                        <th>STT</th>
+                        <th>Hình ảnh</th>
+                        <th>Tiêu đề</th>
+                        <th>Ngày tạo</th>
+                        <th>Hiển thị</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null)
+                    {
+                        var i = 1;
+                        foreach (var item in Model)
+                        {
+                            var strCheck = item.IsActive ? "<i class='fa fa-check text-success'></i>" : "<i class='fa fa-times text-danger'></i>";
+                            <tr>
+                                <td><input type="checkbox" id="cbkItem" value="@item.Id" /></td>
+                                <td>@i</td>
+                                <td><img src="@item.Image" style="width:5rem;height:5rem" /></td>
+                                <td>@item.Title</td>
+                                <td>@item.CreateDate</td>
+                                <td>
+                                    <a href='#' data-id="@item.Id" class="btnActive">@Html.Raw(strCheck)</a>
+                                </td>
+                                <td>
+                                    <a href="~/Admin/Posts/Edit/@item.Id" class="btn btn-sm btn-primary"><i class="fa-solid fa-pen-to-square"></i></a>
+                                    @*<a href="~/Admin/Posts/Details/@item.Id" class="btn btn-sm btn-success"><i class="fa-solid fa-circle-info"></i></a>*@
+                                    <a href="~/Admin/Posts/Delete/@item.Id" class="btn btn-sm btn-danger" onclick="return confirm('Bạn chắc chắn muốn xóa?')"><i class="fa-solid fa-trash-can"></i></a>
+                                </td>
+                            </tr>
+                            i++;
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5">Không có bản ghi nào!</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page }))
+</section>
+
+@section scripts{
+    <script>
+        //jquery js
+        $(document).ready(function () {
+            //
+            $('body').on('click', '#BtnDeleteAll', function (e) {
+                e.preventDefault();
+                var str = "";
+                var checkbox = $(this).parents('.card').find('tr td input:checkbox');
+                var i = 0;
+                checkbox.each(function () {
+                    if (this.checked) {
+                        checkbox.attr('selected', 'checked');
+                        var _id = $(this).val();
+                        if (i === 0) {
+                            str += _id;
+                        } else {
+                            str += "," + _id;
+                        }
+                        i++;
+                    } else {
+                        checkbox.attr('selected', '');
+                    }
+                });
+                if (str.length > 0) {
+                    var conf = confirm('Bạn có muốn xóa các bản ghi này không?');
+                    if (conf === true) {
+                        $.ajax({
+                            url: '/Admin/Posts/DeleteAll',
+                            type: 'POST',
+                            data: { ids: str },
+                            success: function (rs) {
+                                if (rs.success) {
+                                    location.reload();
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+            //Chức năng chọn tất cả cho input tổng
+            $('body').on('change', '#SelectAll', function () {
+                var checkStatus = this.checked;
+                var checkbox = $(this).parents('.card-body').find('tr td input:checkbox');
+                checkbox.each(function () {
+                    this.checked = checkStatus;
+                    if (this.checked) {
+                        checkbox.attr('selected', 'checked');
+                    } else {
+                        checkbox.attr('selected', '');
+                    }
+                });
+            });
+        });
+    </script>
+}

@@ -1,0 +1,104 @@
+﻿@model IEnumerable<MobileShop.Models.EF.ProductImage>
+@{
+    ViewBag.Title = "Ảnh sản phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutEmpty.cshtml";
+}
+<style>
+    .glImage {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+    }
+
+        .glImage li {
+            display: inline-block;
+            position: relative;
+        }
+
+    .box-btn {
+        position: absolute;
+        text-align: center;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+    }
+</style>
+<section class="content">
+    <div class="card-header">
+
+        <div class="card-tools">
+            <input type="button" value="Chọn ảnh" id="chonAnh" class="btn btn-success" />
+        </div>
+        <script language="javascrip" type="text/javascript">
+            $(function () {
+                $("#chonAnh").click(function () {
+                    var ckfiner = new CKFinder();
+                    ckfiner.selectActionFunction = function (fileUrl) {
+                        AddImage(@ViewBag.ProductId, fileUrl);
+                    };
+                    ckfiner.popup();
+                })
+            });
+            function AddImage(id, url) {
+                debugger;
+                $.ajax({
+                    url: '/Admin/ProductImage/AddImage',
+                    type: 'POST',
+                    data: { productId: id, url: url },
+                    success: function (rs) {
+                        if (rs.Success) {
+                            window.location.reload();
+                        }
+                    }
+                });
+            }
+        </script>
+    </div>
+    <div class="card-body">
+        <ul class="glImage">
+            @if (Model != null)
+            {
+                foreach (var item in Model)
+                {
+                    <li id="trow_@item.Id">
+                        <img src="@item.Image" width="200" />
+                        <div class="box-btn">
+                            <a href="'#" data-id="@item.Id" class="btn btn-sm btn-danger btn-Delete"><i class="fa fa-trash"></i></a>
+                            @if (item.IsDefault)
+                            {
+                                <a href="#" data-id="@item.Id" class="btn btn-sm btn-success btn-Default"><i class="fa fa-check"></i></a>
+                            }
+                            else
+                            {
+                                <a href="#" data-id="@item.Id" class="btn btn-sm btn-warning btn-Default"><i class="fa-solid fa-xmark"></i></a>
+                            }
+
+                        </div>
+                    </li>
+                }
+            }
+        </ul>
+    </div>
+</section>
+
+<script>
+    $(document).ready(function () {
+        $('body').on('click', '.btn-Delete', function () {
+            var id = $(this).data('id');
+            var conf = confirm('Bạn có muốn xóa ảnh này?');
+            if (conf === true) {
+                $.ajax({
+                    url: '/Admin/ProductImage/Delete',
+                    type: 'POST',
+                    data: { id: id },
+                    success: function (rs) {
+                        if (rs.Success) {
+                            $('#trow_' + id).remove();
+                        }
+                    }
+                });
+            }
+        });
+    });
+</script>

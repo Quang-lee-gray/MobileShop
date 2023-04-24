@@ -1,0 +1,8 @@
+﻿@model IEnumerable<MobileShop.Models.EF.Categorys>
+@if (Model != null && Model.Any())
+{
+    foreach (var item in Model)
+    {
+        <li> <a href="/@item.seoTitle">@item.Title</a></li>
+    }
+}
